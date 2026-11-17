@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f0e7">
+  <meta name="description" content="A little inspiration for your next Capitol Hill, Seattle meal.">
+  <title>Hilltop — Capitol Hill restaurant picker</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #fff8ed;
+      --ink: #28233d;
+      --muted: #716e7b;
+      --tomato: #f05a45;
+      --tomato-dark: #d94331;
+      --card: #ffffff;
+      --line: #ece5dc;
+      --olive: #168b78;
+      --sans: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 320px;
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      width: min(960px, calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 76px;
+    }
+
+    .brand {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -.04em;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 31px;
+      height: 31px;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--tomato);
+      color: white;
+      font-family: var(--sans);
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .location {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--olive);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .location::before {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f4b83f;
+      content: "";
+    }
+
+    main { padding: 48px 0 52px; }
+
+    .intro {
+      max-width: 650px;
+      margin: 0 auto 32px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 13px;
+      color: #168b78;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .17em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: var(--sans);
+      font-size: clamp(44px, 7vw, 76px);
+      font-weight: 850;
+      letter-spacing: -.07em;
+      line-height: 1;
+    }
+
+    h1 span { color: var(--tomato); }
+
+    .intro-copy {
+      max-width: 430px;
+      margin: 14px auto 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .recommendation {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(270px, .82fr);
+      overflow: hidden;
+      max-width: 850px;
+      min-height: 320px;
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--card);
+      box-shadow: 0 10px 30px rgba(55, 39, 68, .07);
+      animation: arrive .35s ease-out both;
+    }
+
+    .recommendation-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: clamp(26px, 4vw, 44px);
+    }
+
+    .pick-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      color: var(--olive);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .pick-label::before {
+      width: 21px;
+      height: 1px;
+      width: 15px;
+      height: 3px;
+      border-radius: 3px;
+      background: #f4b83f;
+      content: "";
+    }
+
+    .restaurant-name {
+      margin: 0;
+      font-family: var(--sans);
+      font-size: clamp(38px, 5vw, 56px);
+      font-weight: 800;
+      letter-spacing: -.055em;
+      line-height: 1.08;
+    }
+
+    .restaurant-description {
+      max-width: 400px;
+      margin: 13px 0 21px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tags li {
+      padding: 7px 10px;
+      border: 0;
+      border-radius: 999px;
+      background: #fff1bd;
+      color: #665018;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tags li:nth-child(2) {
+      background: #d8f3e8;
+      color: #126a58;
+    }
+
+    .tags li:nth-child(3) {
+      background: #ffe0db;
+      color: #9f382c;
+    }
+
+    .restaurant-art {
+      position: relative;
+      display: grid;
+      min-height: 320px;
+      overflow: hidden;
+      place-items: center;
+      background: #efbd43;
+    }
+
+    .plate {
+      display: grid;
+      width: 132px;
+      height: 132px;
+      place-items: center;
+      border: 7px solid rgba(255, 255, 255, .85);
+      border-radius: 50%;
+      background: #fffdf5;
+      box-shadow: 0 8px 20px rgba(65, 45, 28, .12);
+      font-size: 55px;
+      transition: transform .2s ease;
+    }
+
+    .recommendation:hover .plate { transform: scale(1.04); }
+
+    .art-caption {
+      position: absolute;
+      right: 18px;
+      bottom: 17px;
+      color: rgba(40, 35, 61, .65);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      margin: 20px auto 0;
+    }
+
+    .reroll {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 8px;
+      background: #6554d9;
+      color: white;
+      cursor: pointer;
+      font: 750 14px var(--sans);
+      transition: background .2s ease, transform .2s ease;
+    }
+
+    .reroll:hover { background: #5140c0; transform: translateY(-2px); }
+    .reroll:active { transform: translateY(0); }
+    .reroll:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+    .reroll-icon { font-size: 18px; transition: transform .35s ease; }
+    .reroll:hover .reroll-icon { transform: rotate(90deg); }
+
+    .hint {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .footnote {
+      max-width: 610px;
+      margin: 36px auto 0;
+      padding-top: 16px;
+      border-top: 1px solid #e8dfd3;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .footnote strong { color: var(--ink); }
+
+    @keyframes arrive {
+      from { opacity: .7; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 650px) {
+      .page { width: min(100% - 32px, 520px); }
+      header { min-height: 66px; }
+      main { padding: 38px 0 44px; }
+      .intro { margin-bottom: 25px; }
+      .intro-copy { font-size: 14px; }
+      .recommendation { grid-template-columns: 1fr; }
+      .recommendation-content { order: 2; padding: 27px 24px 30px; }
+      .restaurant-art { order: 1; min-height: 180px; }
+      .plate { width: 104px; height: 104px; font-size: 43px; }
+      .restaurant-name { font-size: 38px; }
+      .footnote { margin-top: 30px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <a class="brand" href="#" aria-label="Hilltop home">
+        <span class="brand-mark" aria-hidden="true">H</span>
+        <span>hilltop</span>
+      </a>
+      <span class="location">Seattle, Washington</span>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">Good food, no overthinking</p>
+        <h1 id="page-title">Where to eat<br>on <span>The Hill?</span></h1>
+        <p class="intro-copy">A neighborhood favorite, picked just for you. Let Capitol Hill make tonight’s decision.</p>
+      </section>
+
+      <section class="recommendation" aria-label="Restaurant recommendation" aria-live="polite" aria-atomic="true">
+        <div class="recommendation-content">
+          <div class="pick-label">Your next table</div>
+          <h2 class="restaurant-name" id="restaurant-name">Spinasse</h2>
+          <p class="restaurant-description" id="restaurant-description">Handmade Piedmontese pasta and a cozy, candlelit room for a special-feeling dinner.</p>
+          <ul class="tags" id="restaurant-tags" aria-label="Restaurant details">
+            <li>Italian</li>
+            <li>Pasta</li>
+            <li>$$$</li>
+          </ul>
+        </div>
+        <div class="restaurant-art" id="restaurant-art" aria-hidden="true">
+          <div class="plate" id="restaurant-emoji">🍝</div>
+          <span class="art-caption">a taste of the neighborhood</span>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button class="reroll" id="reroll" type="button">
+          <span class="reroll-icon" aria-hidden="true">↻</span>
+          <span>Pick another spot</span>
+        </button>
+      </div>
+      <p class="hint">Not quite the mood? There’s always another good one.</p>
+
+      <p class="footnote"><strong>A little local inspiration.</strong> Picks are a curated snapshot of Capitol Hill places, not live listings. Check with the restaurant for current menus, hours, and availability.</p>
+    </main>
+  </div>
+
+  <script>
+    const restaurants = [
+      {
+        name: "Spinasse",
+        description: "Handmade Piedmontese pasta and a cozy, candlelit room for a special-feeling dinner.",
+        details: ["Italian", "Pasta", "$$$"],
+        emoji: "🍝",
+        color: "#efbd43"
+      },
+      {
+        name: "Taurus Ox",
+        description: "Lao-inspired comfort food with bold, bright flavors and a laid-back neighborhood feel.",
+        details: ["Laotian", "Southeast Asian", "$$"],
+        emoji: "🍜",
+        color: "#55c8a9"
+      },
+      {
+        name: "Rondo",
+        description: "A lively izakaya for Japanese small plates, ramen, and a table full of shareable bites.",
+        details: ["Japanese", "Izakaya", "$$"],
+        emoji: "🍱",
+        color: "#fb8b68"
+      },
+      {
+        name: "Nue",
+        description: "A world-spanning menu inspired by street food, made for curious eaters and sharing.",
+        details: ["Global", "Shareable", "$$"],
+        emoji: "🥘",
+        color: "#80aafa"
+      },
+      {
+        name: "Stateside",
+        description: "French-Vietnamese cooking, inventive cocktails, and a polished setting on 12th Avenue.",
+        details: ["Vietnamese", "French-inspired", "$$$"],
+        emoji: "🍲",
+        color: "#56c6c4"
+      },
+      {
+        name: "Carmelo’s Tacos",
+        description: "A casual stop for tacos, burritos, and satisfying Mexican-inspired comfort food.",
+        details: ["Mexican", "Casual", "$"],
+        emoji: "🌮",
+        color: "#ff9d45"
+      },
+      {
+        name: "Oddfellows Café",
+        description: "A Capitol Hill staple with a welcoming dining room and a menu for an easygoing meal.",
+        details: ["American", "Brunch", "$$"],
+        emoji: "🥞",
+        color: "#f08cbd"
+      },
+      {
+        name: "Life on Mars",
+        description: "Plant-based diner favorites, inventive drinks, and a playful, music-loving atmosphere.",
+        details: ["Vegan", "Diner", "$$"],
+        emoji: "🍔",
+        color: "#95c96f"
+      },
+      {
+        name: "Annapurna Café",
+        description: "Comforting Nepalese and Indian flavors, from warming curries to freshly baked naan.",
+        details: ["Nepalese", "Indian", "$$"],
+        emoji: "🍛",
+        color: "#f49a53"
+      },
+      {
+        name: "Plum Bistro",
+        description: "Creative plant-based dining with hearty plates that make vegetables the main event.",
+        details: ["Vegan", "Pacific Northwest", "$$"],
+        emoji: "🥗",
+        color: "#8acb82"
+      },
+      {
+        name: "Ba Bar",
+        description: "A bustling Vietnamese café for pho, crispy rolls, and fragrant noodle bowls.",
+        details: ["Vietnamese", "Noodles", "$$"],
+        emoji: "🍜",
+        color: "#50beb9"
+      },
+      {
+        name: "Tamari Bar",
+        description: "Japanese small plates, dumplings, and noodles in a warm, intimate dining room.",
+        details: ["Japanese", "Small plates", "$$"],
+        emoji: "🥟",
+        color: "#a99af4"
+      }
+    ];
+
+    const nameElement = document.getElementById("restaurant-name");
+    const descriptionElement = document.getElementById("restaurant-description");
+    const tagsElement = document.getElementById("restaurant-tags");
+    const emojiElement = document.getElementById("restaurant-emoji");
+    const artElement = document.getElementById("restaurant-art");
+    const recommendationElement = document.querySelector(".recommendation");
+    let currentIndex = -1;
+
+    function chooseRestaurant() {
+      let nextIndex = Math.floor(Math.random() * restaurants.length);
+      while (restaurants.length > 1 && nextIndex === currentIndex) {
+        nextIndex = Math.floor(Math.random() * restaurants.length);
+      }
+      currentIndex = nextIndex;
+      const restaurant = restaurants[currentIndex];
+
+      nameElement.textContent = restaurant.name;
+      descriptionElement.textContent = restaurant.description;
+      emojiElement.textContent = restaurant.emoji;
+      artElement.style.backgroundColor = restaurant.color;
+      tagsElement.replaceChildren(...restaurant.details.map((detail) => {
+        const tag = document.createElement("li");
+        tag.textContent = detail;
+        return tag;
+      }));
+
+      recommendationElement.style.animation = "none";
+      void recommendationElement.offsetWidth;
+      recommendationElement.style.animation = "";
+    }
+
+    document.getElementById("reroll").addEventListener("click", chooseRestaurant);
+    chooseRestaurant();
+  </script>
+</body>
+</html>
